@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  # myerp:
+  #   ports:
+  #     - "80"
+  omnichannel.api:
+    container_name: omnichannel.api
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "6002:80"
+    restart: always

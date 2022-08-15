@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>OmniChannel</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OmniChannel.Application.Contracts\OmniChannel.Application.Contracts.csproj" />
+    <ProjectReference Include="..\OmniChannel.Application\OmniChannel.Application.csproj" />
+    <ProjectReference Include="..\OmniChannel.Domain\OmniChannel.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="1.9.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.9" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="5.3.0" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi" Version="5.3.0" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.HttpApi" Version="5.3.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi" Version="5.3.0" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.HttpApi" Version="5.3.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.HttpApi" Version="5.3.0" />
+  </ItemGroup>
+
+</Project>

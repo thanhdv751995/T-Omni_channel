@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  # myerp:
+  #   image: ${DOCKER_REGISTRY-}myerp
+  #   build:
+  #     context: .\MyERP
+  #     dockerfile: Dockerfile
+
+  omnichannel.api:
+    image: ${DOCKER_REGISTRY-}omnichannel-api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/OmniChannel.HttpApi.Host/Dockerfile
+
+#network section
+networks:
+  default:
+    name: omnichannel
+    driver: bridge

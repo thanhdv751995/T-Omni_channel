@@ -1,0 +1,69 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+name: '2.$(Month).$(DayOfMonth).dev-$(Rev:r)'
+
+pool:
+  name: "YURI-CICD"
+
+stages:
+- stage: buildImage
+  jobs:
+  - job: dockerBuildPush
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'cri-o.tpos.dev'
+        repository: 'omnichannel/omnichannelhttpApihost'
+        command: 'build'
+        Dockerfile: 'aspnet-core/src/OmniChannel.HttpApi.Host/Dockerfile'
+        buildContext: 'aspnet-core'
+        arguments: --build-arg environment=Staging
+        tags: |
+          $(Build.BuildNumber)
+
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'cri-o.tpos.dev'
+        repository: 'omnichannel/omnichannelhttpApihost'
+        command: 'push'
+        tags: |
+          $(Build.BuildNumber)
+
+- stage: deploy
+  jobs:
+  - job: helmDeploy
+    steps:
+    - task: HelmDeploy@0
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceConnection: 'tmtdev-app.rke.t-idc.net'
+        namespace: 'omni-channel'
+        command: 'upgrade'
+        chartType: filepath
+        chartPath: 'helm-charts/omni-channel-host'
+        chartName: 'omni-channel-host'
+        chartVersion: '$(Build.BuildNumber)'
+        releaseName: 'omni-channel-host'
+        valueFile: 'helm-charts/omni-channel-host/values.yaml'
+        arguments: '--set image.tag=$(Build.BuildNumber) --create-namespace'
+  - job: rollbackDeploy
+    dependsOn:
+    - helmDeploy
+    condition: failed()
+    steps:
+    - checkout: none
+    - task: HelmDeploy@0
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceConnection: 'tmtdev-app.rke.t-idc.net'
+        namespace: 'omni-channel'
+        command: 'rollback'
+        chartType: filepath
+        chartPath: 'helm-charts/omni-channel-host'
+        chartName: 'omni-channel-host'
+        chartVersion: '$(Build.BuildNumber)'
+        releaseName: 'omni-channel-host'
+        valueFile: 'helm-charts/omni-channel-host/values.yaml'
+        arguments: 'omni-channel-host 0'

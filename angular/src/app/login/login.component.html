@@ -1,0 +1,71 @@
+<div class="ml-2 mt-2 w-fit text-white bg-sky-500 cursor-pointer rounded-lg" *ngIf="channelToken == ''" (click)="myFunction()"  color="secondary">
+    <span class="flex items-center ">
+      <img src="https://img.icons8.com/color/48/000000/tiktok--v1.png"/> Đăng nhập với TikTok-Shop
+      &nbsp;
+    </span>
+</div>
+<div *ngIf="channelToken != ''">
+  <tds-flex flex="col" class="w-100">
+    <div class="h-30 w-full p-4  mb-3 text-indigo-700 text-2xl">
+      <span>Thông tin gian hàng</span>
+    </div>
+    <div class="h-30 w-full p-4 mb-1">
+      <span class="font-bold">Shop_name : </span> <span class="break-all">{{infoShop?.seller_name}} </span>
+    </div>
+    <div class="h-30 w-full p-4 mb-1">
+      <span class="font-bold">Last_connection_date : </span> <span class="break-all">{{infoShop?.creationTime| date:'medium'}}</span>
+    </div>
+    <div class="h-30 w-full p-4 mb-1">
+      <span class="font-bold">Pickup Warehouse : </span> <span class="break-all">{{infoShop?.warehouse_list[0].warehouse_name}}</span>
+    </div>
+    <div class="h-30 w-full p-4 mb-1">
+      <span class="font-bold">Return Warehouse : </span> <span class="break-all">{{infoShop?.warehouse_list[1].warehouse_name}}</span>
+    </div>
+    <div class="h-30 w-full pt-4 pl-4">
+      <tds-tag status='warning'> 
+        <span class="flex items-center py-0.5">
+            <i class="tdsi-star-2-fill text-lg leading-none mr-2"></i>Product_list
+        </span>
+    </tds-tag>
+      <!-- <span class="font-bold">Product_list</span> -->
+    </div>
+</tds-flex>
+</div>
+<div class="p-4" *ngIf="channelToken != ''">
+  <tds-table templateMode>
+    <thead>
+      <tr>
+        <th>Create_Time</th>
+        <th>Name</th>
+        <th>Update_time</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of listShop?.products" >
+        <td>{{ convertTime(item.create_time) | date:'medium'}}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ convertTime(item.update_time) | date:'medium'}} </td>
+        <td (click)="showModal(item.id)"><button tds-button size="sm" color="teal">View detail</button></td>
+      </tr>
+    </tbody>
+  </tds-table>
+</div>
+<tds-modal
+  [(visible)]="isVisible"
+  title="Product-Detail"
+  (onCancel)="handleCancel()"
+  (onOk)="handleOk()"
+>
+  <ng-container *tdsModalContent>
+    <div>
+      <span class="font-bold">Product_name : </span> <span class="break-all">{{ productDetail.product_name }} </span>
+    </div>
+    <div class="mt-2">
+      <span class="font-bold">Description : </span> <span class="break-all">{{ productDetail.description | formatDescription}} </span>
+    </div>
+    <div class="mt-2">
+      <span class="font-bold">Package_weight : </span> <span class="break-all">{{ productDetail.package_weight }} </span>
+    </div>
+  </ng-container>
+</tds-modal>
